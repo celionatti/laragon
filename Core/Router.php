@@ -131,14 +131,15 @@ class Router
     /**
      * @param int $code
      * @return void
+     * @throws Exception
      */
     #[NoReturn] protected function abort(int $code = Response::NOT_FOUND): void
     {
         http_response_code($code);
 
-        dd('Not a valid Callback');
+        view("errors/{$code}", []);
 
-//        die();
+        die();
     }
 
 }

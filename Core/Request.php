@@ -18,4 +18,77 @@ class Request
     {
         return strtoupper($_SERVER['REQUEST_METHOD']);
     }
+
+    public function isGet(): bool
+    {
+        return $this->method() === 'GET';
+    }
+
+    public function isPost(): bool
+    {
+        return $this->method() === 'POST';
+    }
+
+    public function isPut(): bool
+    {
+        return $this->method() === 'PUT';
+    }
+
+    public function isPatch(): bool
+    {
+        return $this->method() === 'PATCH';
+    }
+
+    public function isDelete(): bool
+    {
+        return $this->method() === 'DELETE';
+    }
+
+    /**
+     * get a value from the GET variable
+     *
+     */
+    public function get(string $key = '', mixed $default = ''): mixed
+    {
+
+        if (empty($key)) {
+            return $_GET;
+        } elseif (isset($_GET[$key])) {
+            return $_GET[$key];
+        }
+
+        return $default;
+    }
+
+    /**
+     * get a value from the POST variable
+     *
+     */
+    public function post(string $key = '', mixed $default = ''): mixed
+    {
+
+        if (empty($key)) {
+            return $_POST;
+        } elseif (isset($_POST[$key])) {
+            return $_POST[$key];
+        }
+
+        return $default;
+    }
+
+    /**
+     * get a value from the FILES variable
+     *
+     */
+    public function files(string $key = '', mixed $default = ''): mixed
+    {
+
+        if (empty($key)) {
+            return $_FILES;
+        } elseif (isset($_FILES[$key])) {
+            return $_FILES[$key];
+        }
+
+        return $default;
+    }
 }

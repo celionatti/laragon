@@ -11,6 +11,19 @@ function dd($value): void
 
     die;
 }
+
+function urlIs($value): bool
+{
+    return $_SERVER['REQUEST_URI'] === $value;
+}
+
+function authorize($conditions, $status = \Core\Response::FORBIDDEN): void
+{
+    if(! $conditions) {
+        abort($status);
+    }
+}
+
 function base_path($path): string
 {
     return dirname(__DIR__) . DIRECTORY_SEPARATOR . $path;
@@ -53,4 +66,15 @@ function view($path, $attributes = [], $layout = 'default'): void
     $view = new \Core\View();
     $view->setLayout($layout);
     $view->render($path, $attributes);
+}
+
+/**
+ * @throws Exception
+ */
+#[NoReturn] function abort($code = \Core\Response::NOT_FOUND): void
+{
+    http_response_code($code);
+
+    view("errors/{$code}", []);
+    die();
 }

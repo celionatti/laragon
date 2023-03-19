@@ -3,6 +3,7 @@
 namespace Core\Database;
 
 use Core\Application;
+use Core\Response;
 use Exception;
 use PDO;
 use PDOStatement;
@@ -36,11 +37,12 @@ class Database
 
             $this->connection = new PDO($dsn, $username, $password, $options);
         } catch (Exception $e) {
-            throw new Exception("Database Error: {$e->getMessage()}");
+            abort(Response::INTERNAL_SERVER_ERROR);
+//            throw new Exception("Database Error: {$e->getMessage()}");
         }
     }
 
-    public static function getInstance()
+    public static function getInstance(): Database
     {
         if (!self::$_handler) {
             self::$_handler = Application::$app->database;

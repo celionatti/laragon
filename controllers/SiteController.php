@@ -2,6 +2,7 @@
 
 namespace controllers;
 
+use Core\Application;
 use Core\Controller;
 use Core\Request;
 use Core\Response;

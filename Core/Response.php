@@ -23,4 +23,6 @@ class Response
     const INTERNAL_SERVER_ERROR = 500;
     const BAD_GATEWAY = 502;
     const GATEWAY_TIMEOUT = 504;
+    const LARAGON_DATABASE = 601;
+    const LARAGON_RESULT = 600;
 }

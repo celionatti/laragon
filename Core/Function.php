@@ -17,6 +17,9 @@ function urlIs($value): bool
     return $_SERVER['REQUEST_URI'] === $value;
 }
 
+/**
+ * @throws Exception
+ */
 function authorize($conditions, $status = \Core\Response::FORBIDDEN): void
 {
     if(! $conditions) {
@@ -32,6 +35,11 @@ function base_path($path): string
 function assets_path($path): string
 {
     return \Core\Config::get('domain') . 'assets' . DIRECTORY_SEPARATOR . $path;
+}
+
+function console_logger($message): void
+{
+    echo "[" . date("Y-m-d H:i:s") . "] - " . $message . PHP_EOL;
 }
 
 #[NoReturn] function redirect($uri): void
@@ -71,10 +79,10 @@ function view($path, $attributes = [], $layout = 'default'): void
 /**
  * @throws Exception
  */
-#[NoReturn] function abort($code = \Core\Response::NOT_FOUND): void
+#[NoReturn] function abort($code = \Core\Response::NOT_FOUND, $attributes = []): void
 {
     http_response_code($code);
 
-    view("errors/{$code}", []);
+    view("errors/{$code}", $attributes);
     die();
 }

@@ -5,18 +5,19 @@ namespace Core\Database;
 use AllowDynamicProperties;
 use Core\Config;
 use Core\Request;
+use Core\Response;
 use Exception;
 use PDO;
 
 #[AllowDynamicProperties] class DbModel
 {
     protected static string $table;
-    protected static bool $columns = false;
+    private static bool $columns = false;
     protected bool $_validationPassed = true;
     protected array $_errors = [];
     protected array $_skipUpdate = [];
 
-    protected static function getDb($setFetchClass = false)
+    protected static function getDb($setFetchClass = false): Database
     {
         $db = Database::getInstance();
         if ($setFetchClass) {
@@ -38,7 +39,7 @@ use PDO;
         return $db->update(static::$table, $values, $conditions);
     }
 
-    public function delete()
+    public function delete(): Database
     {
         $db = static::getDb();
         $table = static::$table;
@@ -56,6 +57,20 @@ use PDO;
         $db = static::getDb(true);
         list('sql' => $sql, 'bind' => $bind) = self::selectBuilder($params);
         return $db->query($sql, $bind)->results();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function findOrAbort($params = []): false|array
+    {
+        $result = self::find($params);
+
+        if(! $result) {
+            abort(Response::LARAGON_RESULT);
+        }
+        
+        return $result;
     }
 
     public static function findFirst($params = [])

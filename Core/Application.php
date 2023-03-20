@@ -20,7 +20,7 @@ class Application
     /**
      * @throws Exception
      */
-    public function __construct()
+    public function __construct($migrate = false)
     {
         self::$app = $this;
         $this->session = new Session();
@@ -30,11 +30,13 @@ class Application
 
         $this->definitions_calls();
 
-        $router = new \Core\Router();
+        if(! $migrate) {
+            $router = new \Core\Router();
 
-        require base_path('routes/route.php');
+            require base_path('routes/route.php');
 
-        $router->route($router->request->getPath(), $router->request->method());
+            $router->route($router->request->getPath(), $router->request->method());
+        }
     }
 
     /**

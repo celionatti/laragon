@@ -7,6 +7,7 @@ use Core\Controller;
 use Core\Request;
 use Core\Response;
 use Exception;
+use models\Users;
 
 class SiteController extends Controller
 {
@@ -15,7 +16,9 @@ class SiteController extends Controller
      */
     public function index(Request $request, Response $response)
     {
-        $view = [];
+        $view = [
+            'users' => Users::findOrAbort(),
+        ];
         $this->view->render('welcome', $view);
     }
 }

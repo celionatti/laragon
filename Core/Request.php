@@ -91,4 +91,42 @@ class Request
 
         return $default;
     }
+
+    public function getBody(): array
+    {
+        $body = [];
+        if ($this->isGet()) {
+            foreach ($_GET as $key => $value) {
+                $body[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+            }
+        }
+        if ($this->isPost()) {
+            foreach ($_POST as $key => $value) {
+                $body[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+            }
+        }
+        return $body;
+    }
+
+    public function getData($input = false): false|array|string
+    {
+        if (!$input) {
+            $data = [];
+            foreach ($_REQUEST as $field => $value) {
+                $data[$field] = self::sanitize($value);
+            }
+            return $data;
+        }
+        return array_key_exists($input, $_REQUEST) ? self::sanitize($_REQUEST[$input]) : false;
+    }
+
+    public static function sanitize($dirty): string
+    {
+        return htmlspecialchars($dirty);
+    }
+
+    public function esc($str): string
+    {
+        return htmlspecialchars($str);
+    }
 }

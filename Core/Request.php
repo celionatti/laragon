@@ -16,7 +16,7 @@ class Request
 
     public function method(): string
     {
-        return strtoupper($_SERVER['REQUEST_METHOD']);
+        return $_POST['_method'] ?? strtoupper($_SERVER['REQUEST_METHOD']);
     }
 
     public function isGet(): bool

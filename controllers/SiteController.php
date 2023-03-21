@@ -17,7 +17,7 @@ class SiteController extends Controller
     public function index(Request $request, Response $response)
     {
         $view = [
-            'users' => Users::findOrAbort(),
+            'users' => Users::find(),
         ];
         $this->view->render('welcome', $view);
     }

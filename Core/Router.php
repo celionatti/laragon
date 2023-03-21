@@ -17,7 +17,7 @@ class Router
         $this->response = new Response();
     }
 
-    public function add($method, $uri, $controller)
+    public function add($method, $uri, $controller): static
     {
         $this->routes[] = [
             'uri' => $uri,

@@ -4,7 +4,6 @@ namespace Core\Support;
 
 use Core\Application;
 use Core\Response;
-use Core\Session;
 use Exception;
 
 class Csrf

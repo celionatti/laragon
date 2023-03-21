@@ -28,6 +28,7 @@ class Application
         $this->response = new Response();
         self::$container = new Container();
 
+        $this->configs();
         $this->definitions_calls();
 
         if(! $migrate) {
@@ -51,6 +52,52 @@ class Application
         });
 
         $this->database = static::resolve(Database::class);
+    }
+
+    private function configs(): void
+    {
+        ini_set('default_charset', 'UTF-8');
+
+        $minPhpVersion = '7.4';
+        if (version_compare(PHP_VERSION, $minPhpVersion, '<')) {
+            $message = sprintf(
+                'Your PHP version must be %s or higher to run Laragon Framework. Current version: %s',
+                $minPhpVersion,
+                PHP_VERSION
+            );
+
+            exit($message);
+        }
+        $this->checkExtensions();
+    }
+
+    private function checkExtensions(): void
+    {
+        $required_extensions = [
+            'gd',
+            'mysqli',
+            'pdo_mysql',
+            'pdo_sqlite',
+            'curl',
+            'fileinfo',
+            'intl',
+            'exif',
+            'mbstring',
+        ];
+
+        $not_loaded = [];
+
+        foreach ($required_extensions as $ext) {
+
+            if (!extension_loaded($ext)) {
+                $not_loaded[] = $ext;
+            }
+        }
+
+        if (!empty($not_loaded)) {
+            echo "Please load the following extensions in your php.ini file: <br>" . implode("<br>", $not_loaded);
+            die;
+        }
     }
 
     public static function init(): static

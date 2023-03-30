@@ -4,7 +4,7 @@ namespace Core;
 
 use Core\Database\DbModel;
 
-class Model extends DbModel
+class Model
 {
     public function loadData($data)
     {

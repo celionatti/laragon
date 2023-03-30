@@ -2,9 +2,12 @@
 
 namespace models;
 
-use Core\Model;
+use Core\Database\DbModel;
 
-class Users extends Model
+class Users extends DbModel
 {
-    protected static string $table = "users";
+    public static function tableName(): string
+    {
+        return 'users';
+    }
 }

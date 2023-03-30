@@ -4,14 +4,15 @@ namespace Core\Database;
 
 use AllowDynamicProperties;
 use Core\Config;
+use Core\Model;
 use Core\Request;
 use Core\Response;
 use Exception;
 use PDO;
 
-#[AllowDynamicProperties] class DbModel
+#[AllowDynamicProperties] abstract class DbModel extends Model
 {
-    protected static string $table;
+    abstract public static function tableName(): string;
     private static bool $columns = false;
     protected bool $_validationPassed = true;
     protected array $_errors = [];
@@ -29,26 +30,28 @@ use PDO;
 
     public static function insert($values): bool
     {
+        $tableName = static::tableName();
         $db = static::getDb();
-        return $db->insert(static::$table, $values);
+        return $db->insert($tableName, $values);
     }
 
     public static function update($values, $conditions): bool
     {
+        $tableName = static::tableName();
         $db = static::getDb();
-        return $db->update(static::$table, $values, $conditions);
+        return $db->update($tableName, $values, $conditions);
     }
 
     public function delete(): Database
     {
         $db = static::getDb();
-        $table = static::$table;
+        $tableName = static::tableName();
         $params = [
             'conditions' => "id = :id",
             'bind' => ['id' => $this->id]
         ];
         list('sql' => $conds, 'bind' => $bind) = self::queryParamBuilder($params);
-        $sql = "DELETE FROM {$table} {$conds}";
+        $sql = "DELETE FROM {$tableName} {$conds}";
         return $db->execute($sql, $bind);
     }
 
@@ -66,10 +69,10 @@ use PDO;
     {
         $result = self::find($params);
 
-        if(! $result) {
+        if (!$result) {
             abort(Response::LARAGON_RESULT);
         }
-        
+
         return $result;
     }
 
@@ -95,8 +98,8 @@ use PDO;
     {
         unset($params['limit']);
         unset($params['offset']);
-        $table = static::$table;
-        $sql = "SELECT COUNT(*) AS total FROM {$table}";
+        $tableName = static::tableName();
+        $sql = "SELECT COUNT(*) AS total FROM {$tableName}";
         list('sql' => $conds, 'bind' => $bind) = self::queryParamBuilder($params);
         $sql .= $conds;
         $db = static::getDb();
@@ -106,18 +109,19 @@ use PDO;
 
     public function save(): bool
     {
+        $tableName = static::tableName();
         $save = false;
         $this->beforeSave();
         if ($this->_validationPassed) {
             $db = static::getDb();
             $values = $this->getValuesForSave();
             if ($this->isNew()) {
-                $save = $db->insert(static::$table, $values);
+                $save = $db->insert($tableName, $values);
                 if ($save) {
                     $this->id = $db->lastInsertId();
                 }
             } else {
-                $save = $db->update(static::$table, $values, ['id' => $this->id]);
+                $save = $db->update($tableName, $values, ['id' => $this->id]);
             }
         }
         return $save;
@@ -130,8 +134,8 @@ use PDO;
     public static function selectBuilder($params = []): array
     {
         $columns = array_key_exists('columns', $params) ? $params['columns'] : "*";
-        $table = static::$table;
-        $sql = "SELECT {$columns} FROM {$table}";
+        $tableName = static::tableName();
+        $sql = "SELECT {$columns} FROM {$tableName}";
         list('sql' => $conds, 'bind' => $bind) = self::queryParamBuilder($params);
         $sql .= $conds;
         return ['sql' => $sql, 'bind' => $bind];
@@ -202,8 +206,8 @@ use PDO;
     {
         if (!static::$columns) {
             $db = static::getDb();
-            $table = static::$table;
-            $sql = "SHOW COLUMNS FROM {$table}";
+            $tableName = static::tableName();
+            $sql = "SHOW COLUMNS FROM {$tableName}";
             $results = $db->query($sql)->results();
             $columns = [];
             foreach ($results as $column) {
@@ -263,5 +267,4 @@ use PDO;
     public function beforeSave(): void
     {
     }
-
 }

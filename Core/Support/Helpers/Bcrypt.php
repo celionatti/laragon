@@ -12,7 +12,7 @@ class Bcrypt
      * @param int $cost
      * @return string
      */
-    public function hashPassword(string $string, int $cost = 12): string
+    public static function hashPassword(string $string, int $cost = 12): string
     {
         return password_hash($string, PASSWORD_BCRYPT, ['cost' => $cost]);
     }
@@ -25,7 +25,7 @@ class Bcrypt
      * @param string $hashPassword
      * @return bool
      */
-    public function comparePassword(string $password, string $hashPassword): bool
+    public static function comparePassword(string $password, string $hashPassword): bool
     {
         return password_verify($password, $hashPassword);
     }

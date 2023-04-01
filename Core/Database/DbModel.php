@@ -13,7 +13,7 @@ use PDO;
 #[AllowDynamicProperties] abstract class DbModel extends Model
 {
     abstract public static function tableName(): string;
-    private static bool $columns = false;
+    private static $columns = false;
     protected bool $_validationPassed = true;
     protected array $_errors = [];
     protected array $_skipUpdate = [];
